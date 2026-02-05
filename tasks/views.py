@@ -10,7 +10,6 @@ def project_list(request):
 
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
-
     tasks = project.tasks.all().order_by("is_done", "id")
     done_count = project.tasks.filter(is_done=True).count()
     total_count = project.tasks.count()
@@ -18,13 +17,13 @@ def project_detail(request, project_id):
     return render(
         request,
         "tasks/project_detail.html",
-        {
-            "project": project,
-            "tasks": tasks,
-            "done_count": done_count,
-            "total_count": total_count,
-        },
+        {"project": project, "tasks": tasks, "done_count": done_count, "total_count": total_count},
     )
+
+
+def all_tasks(request):
+    tasks = Task.objects.select_related("project").all().order_by("is_done", "id")
+    return render(request, "tasks/all_tasks.html", {"tasks": tasks})
 
 
 @require_POST
