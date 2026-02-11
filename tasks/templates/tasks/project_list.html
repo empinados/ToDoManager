@@ -1,16 +1,46 @@
 {% extends "tasks/base.html" %}
-{% block title %}Projects{% endblock %}
+{% block title %}Projects • Todo Manager{% endblock %}
 
 {% block content %}
-<h2>Projects</h2>
+  <section class="hero">
+    <div>
+      <h1 class="h1">Projects</h1>
+      <p class="muted">Create a project, then add tasks and track progress.</p>
+    </div>
 
-{% if projects %}
-  <ul>
+    <form class="form form--inline" method="post" action="{% url 'tasks:create_project' %}">
+      {% csrf_token %}
+      <input class="input" name="name" placeholder="New project name…" maxlength="200" required />
+      <button class="btn btn--primary" type="submit">Create</button>
+    </form>
+  </section>
+
+  <div class="grid">
     {% for p in projects %}
-      <li><a href="{% url 'tasks:project_detail' p.id %}">{{ p.name }}</a></li>
+      <a class="card" href="{% url 'tasks:project_detail' p.id %}">
+        <div class="card__top">
+          <h2 class="h2">{{ p.name }}</h2>
+          <span class="pill">{{ p.done_tasks|default:0 }}/{{ p.total_tasks|default:0 }}</span>
+        </div>
+
+        <div class="progress">
+          {% if p.total_tasks %}
+            {% widthratio p.done_tasks p.total_tasks 100 as pct %}
+          {% else %}
+            {% with 0 as pct %}
+            {% endwith %}
+          {% endif %}
+          <div class="progress__bar" style="--w: {% if p.total_tasks %}{% widthratio p.done_tasks p.total_tasks 100 %}{% else %}0{% endif %}%;"></div>
+
+        <div class="card__bottom">
+          <span class="muted">Open project →</span>
+        </div>
+      </a>
+    {% empty %}
+      <div class="empty">
+        <h2 class="h2">No projects yet</h2>
+        <p class="muted">Create your first project above.</p>
+      </div>
     {% endfor %}
-  </ul>
-{% else %}
-  <p>No projects yet.</p>
-{% endif %}
+  </div>
 {% endblock %}

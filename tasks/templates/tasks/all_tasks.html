@@ -1,19 +1,48 @@
 {% extends "tasks/base.html" %}
-{% block title %}All Tasks{% endblock %}
+{% block title %}All Tasks • Todo Manager{% endblock %}
 
 {% block content %}
-<h2>All Tasks</h2>
+  <section class="hero hero--compact">
+    <div class="hero__left">
+      <h1 class="h1">All Tasks</h1>
+      <div class="stats">
+        <span class="pill">Done: {{ done_count }}/{{ total_count }}</span>
+        <span class="pill pill--soft">{{ progress }}%</span>
+      </div>
+      <div class="progress progress--big">
+        <div class="progress__bar" style="--w: {{ progress }}%;"></div>
+      </div>
+    </div>
+  </section>
 
-{% if tasks %}
-  <ul>
-    {% for t in tasks %}
-      <li>
-        {% if t.is_done %}✅{% else %}⏳{% endif %}
-        {{ t.title }} ({{ t.project.name }})
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>No tasks.</p>
-{% endif %}
+  <section class="card card--plain">
+    {% if tasks %}
+      <ul class="list">
+        {% for t in tasks %}
+          <li class="list__item">
+            <div class="task">
+              <div class="task__left">
+                <span class="check {% if t.is_done %}check--on{% endif %}">
+                  {% if t.is_done %}✓{% else %}•{% endif %}
+                </span>
+                <div class="task__text">
+                  <div class="task__title {% if t.is_done %}task__title--done{% endif %}">{{ t.title }}</div>
+                  <div class="muted small">Project: <a class="link" href="{% url 'tasks:project_detail' t.project.id %}">{{ t.project.name }}</a></div>
+                </div>
+              </div>
+
+              <div class="task__actions">
+                <span class="pill pill--soft">#{{ t.id }}</span>
+              </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty">
+        <h2 class="h2">No tasks yet</h2>
+        <p class="muted">Create a project and add tasks.</p>
+      </div>
+    {% endif %}
+  </section>
 {% endblock %}

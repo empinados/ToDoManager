@@ -1,15 +1,40 @@
 {% load static %}
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{% block title %}Todo Manager{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'tasks/style.css' %}">
+  <link rel="stylesheet" href="{% static 'tasks/style.css' %}" />
 </head>
 <body>
-  <div class="container">
-    <h1><a href="{% url 'tasks:project_list' %}">Todo Manager</a></h1>
+  <div class="bg"></div>
+
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="{% url 'tasks:project_list' %}">
+        <span class="brand__logo">✓</span>
+        <span class="brand__text">Todo Manager</span>
+      </a>
+
+      <nav class="nav">
+        <a class="nav__link" href="{% url 'tasks:project_list' %}">Projects</a>
+        <a class="nav__link" href="{% url 'tasks:all_tasks' %}">All Tasks</a>
+        <a class="nav__link" href="/admin/">Admin</a>
+        <a class="nav__link" href="/api/projects/">API</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
     {% block content %}{% endblock %}
-  </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span>Todo Manager • Django</span>
+      <span class="muted">Local demo</span>
+    </div>
+  </footer>
 </body>
 </html>

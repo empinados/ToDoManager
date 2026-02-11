@@ -1,40 +1,74 @@
 {% extends "tasks/base.html" %}
-{% block title %}{{ project.name }}{% endblock %}
+{% block title %}{{ project.name }} • Todo Manager{% endblock %}
 
 {% block content %}
-<h2>{{ project.name }}</h2>
-<p>Done: {{ done_count }} / {{ total_count }}</p>
+  <section class="hero hero--compact">
+    <div class="hero__left">
+      <h1 class="h1">{{ project.name }}</h1>
+      <div class="stats">
+        <span class="pill">Done: {{ done_count }}/{{ total_count }}</span>
+        <span class="pill pill--soft">{{ progress }}%</span>
+      </div>
 
-<form method="post" action="{% url 'tasks:add_task' project.id %}">
-  {% csrf_token %}
-  <input type="text" name="title" placeholder="New task title" required>
-  <button type="submit">Add</button>
-</form>
+      <div class="progress progress--big">
+        <div class="progress__bar" style="--w: {{ progress }}%;"></div>
+      </div>
+    </div>
 
-<hr>
+    <div class="hero__right">
+      <form class="form form--inline" method="post" action="{% url 'tasks:add_task' project.id %}">
+        {% csrf_token %}
+        <input class="input" name="title" placeholder="New task title…" maxlength="200" required />
+        <button class="btn btn--primary" type="submit">Add</button>
+      </form>
 
-{% if tasks %}
-  <ul>
-    {% for t in tasks %}
-      <li>
-        {% if t.is_done %}✅{% else %}⏳{% endif %}
-        {{ t.title }}
+      <form method="post" action="{% url 'tasks:delete_project' project.id %}" class="form">
+        {% csrf_token %}
+        <button class="btn btn--danger" type="submit">Delete project</button>
+      </form>
+    </div>
+  </section>
 
-        <form method="post" action="{% url 'tasks:toggle_task' t.id %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit">
-            {% if t.is_done %}Mark not done{% else %}Mark done{% endif %}
-          </button>
-        </form>
+  <section class="card card--plain">
+    <h2 class="h2">Tasks</h2>
 
-        <form method="post" action="{% url 'tasks:delete_task' t.id %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit">Delete</button>
-        </form>
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>No tasks in this project.</p>
-{% endif %}
+    {% if tasks %}
+      <ul class="list">
+        {% for t in tasks %}
+          <li class="list__item">
+            <div class="task">
+              <div class="task__left">
+                <span class="check {% if t.is_done %}check--on{% endif %}">
+                  {% if t.is_done %}✓{% else %}•{% endif %}
+                </span>
+                <div class="task__text">
+                  <div class="task__title {% if t.is_done %}task__title--done{% endif %}">{{ t.title }}</div>
+                  <div class="muted small">Task #{{ t.id }}</div>
+                </div>
+              </div>
+
+              <div class="task__actions">
+                <form method="post" action="{% url 'tasks:toggle_task' t.id %}">
+                  {% csrf_token %}
+                  <button class="btn btn--ghost" type="submit">
+                    {% if t.is_done %}Mark as not done{% else %}Mark as done{% endif %}
+                  </button>
+                </form>
+
+                <form method="post" action="{% url 'tasks:delete_task' t.id %}">
+                  {% csrf_token %}
+                  <button class="btn btn--danger" type="submit">Delete</button>
+                </form>
+              </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty">
+        <h2 class="h2">No tasks</h2>
+        <p class="muted">Add your first task above.</p>
+      </div>
+    {% endif %}
+  </section>
 {% endblock %}
