@@ -90,14 +90,3 @@ def delete_project(request, project_id):
     project.delete()
     return redirect("tasks:project_list")
 
-
-def create_superuser(request):
-    if User.objects.filter(username="admin").exists():
-        return HttpResponse("Admin уже существует.")
-
-    User.objects.create_superuser(
-        username="admin",
-        email="admin@example.com",
-        password="Admin12345"
-    )
-    return HttpResponse("Админ создан! Логин: admin, Пароль: Admin12345")

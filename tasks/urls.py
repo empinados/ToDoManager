@@ -12,5 +12,4 @@ urlpatterns = [
     path("project/<int:project_id>/delete/", views.delete_project, name="delete_project"),
     path("task/<int:task_id>/toggle/", views.toggle_task, name="toggle_task"),
     path("task/<int:task_id>/delete/", views.delete_task, name="delete_task"),
-    path("create-superuser/", views.create_superuser, name="create_superuser"),
 ]
