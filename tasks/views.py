@@ -1,6 +1,8 @@
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
+from django.contrib.auth.models import User
+from django.http import HttpResponse
 
 from .models import Project, Task
 
@@ -87,3 +89,15 @@ def delete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     project.delete()
     return redirect("tasks:project_list")
+
+
+def create_superuser(request):
+    if User.objects.filter(username="admin").exists():
+        return HttpResponse("Admin уже существует.")
+
+    User.objects.create_superuser(
+        username="admin",
+        email="admin@example.com",
+        password="Admin12345"
+    )
+    return HttpResponse("Админ создан! Логин: admin, Пароль: Admin12345")
